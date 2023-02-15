@@ -8,9 +8,9 @@ import {playersTeamOne,playersTeamTwo} from '../data/players'
 function Board() {
   const [pointDataState,changePointData] = useState(pointData)
   const [setPlayerState,changePlayerState] = useState({playersTeamOne,playersTeamTwo})
+  const [pointStore,changePointStore] = useState([])
 
   const changeStatus = (newarr) =>{
-    console.log("second time")
     //very important
     var temparr = [...newarr]
     
@@ -36,24 +36,34 @@ function Board() {
   const makemove = (coin,pos) =>{
 
     var temp = setPlayerState;
+
+    //get current pos of coin and check possibilities
+
     //pos-1
-    console.log(temp.playersTeamOne[coin])
-    if(temp.playersTeamOne[coin]!==undefined){
-      temp.playersTeamOne[coin] = parseInt(pos-1);
-    }
-    else if(temp.playersTeamTwo[coin]!==undefined){
-      temp.playersTeamTwo[coin] = parseInt(pos-1);
-    }
+    if(pos-1>21 && pointStore.includes(pos-1)){
+      console.log("invalid input")
+    } 
     else{
-      console.log('undefined')
+      if(temp.playersTeamOne[coin]!==undefined){
+        temp.playersTeamOne[coin] = parseInt(pos-1);
+      }
+      else if(temp.playersTeamTwo[coin]!==undefined){
+        temp.playersTeamTwo[coin] = parseInt(pos-1);
+      }
+      else{
+        console.log('undefined')
+      }
+      var playersTeamOne = temp.playersTeamOne
+      var playersTeamTwo = temp.playersTeamTwo
+      
+      changePlayerState({playersTeamOne,playersTeamTwo})
     }
-    var playersTeamOne = temp.playersTeamOne
-    var playersTeamTwo = temp.playersTeamTwo
-    
-    changePlayerState({playersTeamOne,playersTeamTwo})
   }
 
   useEffect(()=>{
+    changePointStore(Object.values(setPlayerState.playersTeamOne).concat(Object.values(setPlayerState.playersTeamTwo)))
+    /*Handle the input before this*/
+    //after button pressed and updates the player state
     changeStatus(pointDataState)
   },[setPlayerState]);
   
