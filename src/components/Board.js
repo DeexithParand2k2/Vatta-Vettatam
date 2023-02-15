@@ -5,21 +5,17 @@ import Points from './Points'
 import pointData from '../data/pointStatus'
 import {playersTeamOne,playersTeamTwo} from '../data/players'
 
-
-const makemove = (coin,pos) =>{
-  console.log(coin,pos)
-}
-
 function Board() {
   const [pointDataState,changePointData] = useState(pointData)
   const [setPlayerState,changePlayerState] = useState({playersTeamOne,playersTeamTwo})
 
   const changeStatus = (newarr) =>{
-
+    console.log("second time")
     //very important
     var temparr = [...newarr]
+    
     temparr.forEach((element) => {
-      element.isPlaced = "empty"
+      if(element.isPlaced!=="empty") element.isPlaced="empty";
     });
   
     for (const index in setPlayerState.playersTeamOne) {
@@ -38,30 +34,26 @@ function Board() {
   }
 
   const makemove = (coin,pos) =>{
-    let tempState = setPlayerState;
+
+    var temp = setPlayerState;
     //pos-1
-    if(tempState.playersTeamOne[coin]!==undefined){
-      tempState.playersTeamOne[coin] = parseInt(pos-1);
+    console.log(temp.playersTeamOne[coin])
+    if(temp.playersTeamOne[coin]!==undefined){
+      temp.playersTeamOne[coin] = parseInt(pos-1);
     }
-    else if(tempState.playersTeamTwo[coin]!==undefined){
-      tempState.playersTeamTwo[coin] = parseInt(pos-1);
+    else if(temp.playersTeamTwo[coin]!==undefined){
+      temp.playersTeamTwo[coin] = parseInt(pos-1);
     }
     else{
       console.log('undefined')
     }
+    var playersTeamOne = temp.playersTeamOne
+    var playersTeamTwo = temp.playersTeamTwo
     
-    console.log(tempState)
-    changePlayerState(tempState)
+    changePlayerState({playersTeamOne,playersTeamTwo})
   }
 
-  //changeStatus(pointDataState)
-
-  // useEffect(()=>{
-  //   console.log('state changed',setPlayerState)
-  // },[setPlayerState])
-
   useEffect(()=>{
-    console.log('changed here')
     changeStatus(pointDataState)
   },[setPlayerState]);
   
