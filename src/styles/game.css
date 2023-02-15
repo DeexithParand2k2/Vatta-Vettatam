@@ -1,0 +1,32 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.boardImg{
+    opacity: 0.8;
+}
+
+/*to handle relative positioning*/
+.boardHandler{
+    position: relative;
+    display: inline-block;
+}
+
+.point{
+    position:absolute;
+    height: 30px;
+    width: 30px;
+    padding: 5px;   
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.point > p{
+    font-family:'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: white;
+    font-size:large;
+}
