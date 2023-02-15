@@ -1,12 +1,11 @@
 import React from 'react'
 import '../styles/game.css'
-import {playersTeamOne,playersTeamTwo} from '../data/players'
 
 const setColor = (isPlaced) =>{
-    if(playersTeamOne.includes(isPlaced)===true){
+    if(isPlaced[0]==='r'){
         return "#750000"
     }
-    if(playersTeamTwo.includes(isPlaced)===true){
+    if(isPlaced[0]==='b'){
         return "#050A30"
     }
     return "empty";
