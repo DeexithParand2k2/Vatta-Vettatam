@@ -22,7 +22,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.3s ease;
+    transition: background-color 1s ease;
 }
 
 .point > p{
