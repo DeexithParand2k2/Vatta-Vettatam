@@ -11,6 +11,13 @@
 .boardHandler{
     position: relative;
     display: inline-block;
+    margin: 30px;  
+}
+
+.gamediv{
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
 }
 
 .point{

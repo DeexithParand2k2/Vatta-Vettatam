@@ -17,4 +17,20 @@ const playersTeamOne = {
     r6: 6,
 }
 
-export {playersTeamTwo, playersTeamOne};
+//valid moves
+const validMovesArray = {
+    r1: [],
+    r2: [],
+    r3: [],
+    r4: [6],
+    r5: [7,8],
+    r6: [12,13],
+    b1: [],
+    b2: [],
+    b3: [],
+    b4: [15],
+    b5: [7,8],
+    b6: [12,13],
+}
+
+export {playersTeamTwo, playersTeamOne, validMovesArray};

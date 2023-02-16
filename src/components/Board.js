@@ -3,11 +3,11 @@ import '../styles/game.css'
 import { useState,useEffect } from 'react'
 import Points from './Points'
 import pointData from '../data/pointStatus'
-import {playersTeamOne,playersTeamTwo} from '../data/players'
+import {playersTeamOne,playersTeamTwo,validMovesArray} from '../data/players'
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { forwardRef } from 'react'
-import Nextmove from './Nextmove'
+import {NextMoveRed,getSelectedRedPoint,getPressedRed} from './Nextmove.js'
 import ptsnear from '../data/ptsnear'
 
 const Alert = forwardRef(function Alert(props, ref) {
@@ -19,7 +19,13 @@ function Board() {
   const [setPlayerState,changePlayerState] = useState({playersTeamOne,playersTeamTwo})
   const [pointStore,changePointStore] = useState([])
   const [open, setOpen] = useState(false);
-  const [validMoves,changeValidMoves] = useState([]);
+  const [validMoves,changeValidMoves] = useState(validMovesArray);
+
+  const [currRed,chooseRed] = useState({}) 
+
+  useEffect(()=>{
+    console.log('jolly maarudhu')
+  },[currRed])
 
   let getCurrPos = (coin) =>{
     var temp = setPlayerState;
@@ -64,21 +70,14 @@ function Board() {
   }
 
   const makemove = (coin,pos) =>{
-
     var temp = setPlayerState;
 
-    //get current pos of coin and check possibilities
-    var currPos = getCurrPos(coin);
-    //valid move arr
-    var validarr = ptsnear[currPos]
-    var temparr = validarr.filter(x => !pointStore.includes(x));
-    console.log(temparr)
     //pos-1
     if(pointStore.includes(pos-1)){
       console.log("invalid input")
       handleOpen()
     } 
-    else if(!temparr.includes(pos-1)){
+    else if(!validMoves[coin].includes(pos-1)){
       console.log("Can Move only one step")
       handleOpen()
     }
@@ -99,6 +98,25 @@ function Board() {
     }
   }
 
+  const updateValidMoves = (validMovesObj) =>{
+    var tempobj = validMovesObj
+    //get coin value from key
+    //get the position
+    Object.keys(tempobj).forEach(coin => {
+      let currPos = getCurrPos(coin);
+      let validarr = ptsnear[currPos]
+      let retarr = validarr.filter(x => !pointStore.includes(x));
+      tempobj[coin] = retarr;
+    });
+    changeValidMoves(tempobj)
+  }
+
+  useEffect(()=>{
+    //change the valid moves
+    updateValidMoves(validMoves);
+    
+  },[pointStore])
+
   useEffect(()=>{
     changePointStore(Object.values(setPlayerState.playersTeamOne).concat(Object.values(setPlayerState.playersTeamTwo)))
     /*Handle the input before this*/
@@ -107,12 +125,13 @@ function Board() {
   },[setPlayerState]);
   
   return (
-    <>
+    <div className='gamediv'>
+      <NextMoveRed validMoves={validMoves} chooseRed={chooseRed} setPlayerState={setPlayerState}/>
       <div className='boardHandler'>
           <img className="boardImg" src={Watermelon_chess_board} alt="watermelon_chess_board"/>
           <Points pointData={pointDataState} />
       </div>
-      <div>
+      {/* <div>
         <input className="inptCoin" type="text" style={{margin:'3px'}} placeholder="Enter Name" />
         <input className="inptPlace" type="text" style={{margin:'3px'}} placeholder="Spawn" />
         <button onClick={()=>{
@@ -120,15 +139,17 @@ function Board() {
           var inpt2 = document.getElementsByClassName('inptPlace')[0].value;
           makemove(inpt1,inpt2)
         }} type="button" style={{margin:'3px'}}>send</button>
-      </div>
-      {/* <Nextmove /> */}
+      </div> */}
+      <button onClick={()=>{
+          makemove(currRed.pressedRed,currRed.selectedRedPoint+1)
+      }} type="button" style={{margin:'3px'}}>send</button>  
 
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
         <Alert onClose={handleClose} severity="warning">
           Invalid Move!
         </Alert>
       </Snackbar>
-    </>
+    </div>
     
     //create controller here to change the state of the points based on input
 

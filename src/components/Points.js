@@ -3,10 +3,10 @@ import '../styles/game.css'
 
 const setColor = (isPlaced) =>{
     if(isPlaced[0]==='r'){
-        return "#750000"
+        return "#DC0000"
     }
     if(isPlaced[0]==='b'){
-        return "#050A30"
+        return "#362FD9"
     }
     if(isPlaced==='empty'){
         return "black";
