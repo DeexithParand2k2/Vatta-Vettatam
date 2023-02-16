@@ -7,25 +7,29 @@ import {playersTeamOne,playersTeamTwo,validMovesArray} from '../data/players'
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { forwardRef } from 'react'
-import {NextMoveRed,getSelectedRedPoint,getPressedRed} from './Nextmove.js'
+import NextMoveRed from './NextmoveRed.js'
 import ptsnear from '../data/ptsnear'
+import NextMoveBlue from './NextmoveBlue'
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 function Board() {
+  //map points intially with isplaced as empty, and top,left pos
   const [pointDataState,changePointData] = useState(pointData)
   const [setPlayerState,changePlayerState] = useState({playersTeamOne,playersTeamTwo})
   const [pointStore,changePointStore] = useState([])
   const [open, setOpen] = useState(false);
   const [validMoves,changeValidMoves] = useState(validMovesArray);
 
-  const [currRed,chooseRed] = useState({}) 
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  useEffect(()=>{
-    console.log('jolly maarudhu')
-  },[currRed])
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   let getCurrPos = (coin) =>{
     var temp = setPlayerState;
@@ -38,14 +42,7 @@ function Board() {
     else return -1;
   }
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
+  //update isplaced in pointDataState 
   const changeStatus = (newarr) =>{
     //very important
     var temparr = [...newarr]
@@ -69,6 +66,7 @@ function Board() {
     changePointData(temparr)
   }
 
+  //send data as position
   const makemove = (coin,pos) =>{
     var temp = setPlayerState;
 
@@ -111,6 +109,7 @@ function Board() {
     changeValidMoves(tempobj)
   }
 
+  //check whether the position is only within neighbours
   useEffect(()=>{
     //change the valid moves
     updateValidMoves(validMoves);
@@ -120,39 +119,25 @@ function Board() {
   useEffect(()=>{
     changePointStore(Object.values(setPlayerState.playersTeamOne).concat(Object.values(setPlayerState.playersTeamTwo)))
     /*Handle the input before this*/
-    //after button pressed and updates the player state
+    //after makemove update isplaced using pointDataState, each time setPlayerState changes 
     changeStatus(pointDataState)
   },[setPlayerState]);
   
   return (
     <div className='gamediv'>
-      <NextMoveRed validMoves={validMoves} chooseRed={chooseRed} setPlayerState={setPlayerState}/>
+      <NextMoveRed validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
       <div className='boardHandler'>
           <img className="boardImg" src={Watermelon_chess_board} alt="watermelon_chess_board"/>
           <Points pointData={pointDataState} />
       </div>
-      {/* <div>
-        <input className="inptCoin" type="text" style={{margin:'3px'}} placeholder="Enter Name" />
-        <input className="inptPlace" type="text" style={{margin:'3px'}} placeholder="Spawn" />
-        <button onClick={()=>{
-          var inpt1 = document.getElementsByClassName('inptCoin')[0].value;
-          var inpt2 = document.getElementsByClassName('inptPlace')[0].value;
-          makemove(inpt1,inpt2)
-        }} type="button" style={{margin:'3px'}}>send</button>
-      </div> */}
-      <button onClick={()=>{
-          makemove(currRed.pressedRed,currRed.selectedRedPoint+1)
-      }} type="button" style={{margin:'3px'}}>send</button>  
+      <NextMoveBlue validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
 
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
         <Alert onClose={handleClose} severity="warning">
           Invalid Move!
         </Alert>
       </Snackbar>
-    </div>
-    
-    //create controller here to change the state of the points based on input
-
+    </div> 
   )
 }
 

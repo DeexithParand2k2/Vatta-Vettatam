@@ -1,26 +1,13 @@
 import React,{useEffect, useState} from 'react'
 import '../styles/controller.css'
 
-const getSelectedRedPoint = (selectedRedPoint) =>{
-    return selectedRedPoint
-}
-
-const getPressedRed = (pressedRed) =>{
-    return pressedRed
-}
-
-function NextMoveRed({validMoves,setPlayerState,chooseRed}) {
+function NextMoveRed({validMoves,setPlayerState,makemove}) {
   const [pressedRed,changePressedRed] = useState('');
-  const [selectedRedPoint,changeSelectedRedPoint] = useState(-1);
   const [availablePoints,changeAvailablePoints] = useState();
 
   useEffect(()=>{
     changeAvailablePoints(validMoves[pressedRed])
   },[pressedRed])
-
-  useEffect(()=>{
-    console.log(`pos at ${selectedRedPoint}`)
-  },[selectedRedPoint])
 
   return (
 
@@ -46,7 +33,7 @@ function NextMoveRed({validMoves,setPlayerState,chooseRed}) {
                     availablePoints.map((eachEle)=>{
                         return (
                             <div key={eachEle} className="redAvailableKeys" onClick={()=>{
-                                changeSelectedRedPoint(eachEle)
+                                makemove(pressedRed,eachEle+1)
                             }}>
                                 {eachEle+1}
                             </div>
@@ -56,10 +43,10 @@ function NextMoveRed({validMoves,setPlayerState,chooseRed}) {
             </div>
         }
 
-        <button onClick={() => chooseRed({pressedRed,selectedRedPoint})}>Move Red</button>
+        {/* <button onClick={() => chooseRed({pressedRed,selectedRedPoint})}>Move Red</button> */}
         
     </div>
   )
 }
 
-export {NextMoveRed,getSelectedRedPoint,getPressedRed}
+export default NextMoveRed
