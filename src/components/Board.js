@@ -3,7 +3,7 @@ import '../styles/game.css'
 import { useState,useEffect } from 'react'
 import Points from './Points'
 import pointData from '../data/pointStatus'
-import {playersTeamOne,playersTeamTwo,validMovesArray} from '../data/players'
+import {playersTeamOne,playersTeamTwo,validMovesArray,opponentCheckArray} from '../data/players'
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { forwardRef } from 'react'
@@ -22,6 +22,7 @@ function Board() {
   const [pointStore,changePointStore] = useState([])
   const [open, setOpen] = useState(false);
   const [validMoves,changeValidMoves] = useState(validMovesArray);
+  const [opponentCheck,changeOpponentCheck] = useState(opponentCheckArray)
 
   const handleClose = () => {
     setOpen(false);
@@ -50,7 +51,7 @@ function Board() {
     temparr.forEach((element) => {
       if(element.isPlaced!=="empty") element.isPlaced="empty";
     });
-  
+
     for (const index in setPlayerState.playersTeamOne) {
       if (setPlayerState.playersTeamOne.hasOwnProperty(index)) {
         temparr[setPlayerState.playersTeamOne[index]].isPlaced=String(index);
@@ -109,10 +110,42 @@ function Board() {
     changeValidMoves(tempobj)
   }
 
+  const updateOpponentCheckers = (opponentCheck) =>{
+    var tempObj = opponentCheck
+    //loop through each key of opponentCheck
+    Object.keys(tempObj).forEach((key)=>{
+      if(key[0]==='r'){
+        let currPos = getCurrPos(key);
+        let nearPtArr = ptsnear[currPos]
+        let opponentTeamArray = Object.values(setPlayerState.playersTeamTwo)
+        let retarr = nearPtArr.filter(x => (pointStore.includes(x) && opponentTeamArray.includes(x)));
+        tempObj[key] = retarr;
+      }
+      else{
+        let currPos = getCurrPos(key);
+        let nearPtArr = ptsnear[currPos]
+        let opponentTeamArray = Object.values(setPlayerState.playersTeamOne)
+        let retarr = nearPtArr.filter(x => (pointStore.includes(x) && opponentTeamArray.includes(x)));
+        tempObj[key] = retarr;
+      }
+
+      changeOpponentCheck(tempObj)
+    })
+    //1.get the name & establish the opponent
+  }
+
   //check whether the position is only within neighbours
   useEffect(()=>{
     //change the valid moves
     updateValidMoves(validMoves);
+
+    //update opponent checkers
+    updateOpponentCheckers(opponentCheck);
+    console.log(opponentCheck.b6)
+
+    //create one for invalidChecker(opponents blocking)
+    //then checking to be done for removal
+    //different checking to end game
     
   },[pointStore])
 

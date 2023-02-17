@@ -33,4 +33,20 @@ const validMovesArray = {
     b6: [12,13],
 }
 
-export {playersTeamTwo, playersTeamOne, validMovesArray};
+//opponent check
+const opponentCheckArray = {
+    r1: [],
+    r2: [],
+    r3: [],
+    r4: [],
+    r5: [],
+    r6: [],
+    b1: [],
+    b2: [],
+    b3: [],
+    b4: [],
+    b5: [],
+    b6: [],
+}
+
+export {playersTeamTwo, playersTeamOne, validMovesArray, opponentCheckArray};
