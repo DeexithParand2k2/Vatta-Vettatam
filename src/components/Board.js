@@ -68,6 +68,26 @@ function Board() {
     changePointData(temparr)
   }
 
+  //called from make move
+  const edgeCaseSuicideMove = (key,pos) =>{
+    var currTeam = key[0]
+    var searchObj = (currTeam==='r')?setPlayerState.playersTeamTwo:setPlayerState.playersTeamOne
+    var retVal = false
+
+    //console.log(opponentCheck[key])
+    //console.log(searchObj)
+    opponentCheck[key].forEach((opponentPos)=>{
+      //opponent pos
+      const oppkey = Object.keys(searchObj).find(key => searchObj[key] === opponentPos);
+      if(validMoves[oppkey].length===1 && validMoves[oppkey][0]===pos-1){
+        console.log('hello')
+        retVal = true
+      }
+    })
+
+    return retVal
+  }
+
   //send data as position
   const makemove = (coin,pos) =>{
     var temp = setPlayerState;
@@ -78,12 +98,25 @@ function Board() {
     //detect suicide move
     //key is the one which will be deleted by the coins move
     Object.keys(validMoves).forEach((key)=>{
-      if(key[0]===coin[0] && key!=coin && validMoves[coin].includes(validMoves[key][0]) && validMoves[key].length===1 && validMoves[key][0]===pos-1 && opponentCheck[key].length!==0){
-        console.log(key,coin,validMoves[key][0]===pos-1,validMoves[key].length===1,validMoves[coin].includes(validMoves[key][0]),validMoves[key][0],opponentCheck[key].length!==0)
-        suicideFlag = true;
-      }
-      else{
-        //console.log(key,coin,validMoves[key][0]===pos,validMoves[key].length===1,validMoves[coin].includes(validMoves[key][0]),validMoves[key][0],opponentCheck[key].length!==0)
+      /* 
+        edge case 1. 
+        key and coin shouldn't be nearby
+        from ptsnear, get pos of key
+        check if index of coin is present in ptsnear
+      */
+      /*
+        edge case 2
+        get the opponent pos using opponentcheck
+        check if the validmoves[opppos].length=1 and validmoves[opppos][0]===pos
+        then not a suicide move
+      */
+
+      if(!ptsnear[getCurrPos(key)].includes(getCurrPos(coin)) && key[0]===coin[0] && key!=coin && validMoves[coin].includes(validMoves[key][0]) && validMoves[key].length===1 && validMoves[key][0]===pos-1 && opponentCheck[key].length!==0){
+        //console.log(key,coin,validMoves[key][0]===pos-1,validMoves[key].length===1,validMoves[coin].includes(validMoves[key][0]),validMoves[key][0],opponentCheck[key].length!==0)
+        console.log(edgeCaseSuicideMove(key,pos))
+        if(!edgeCaseSuicideMove(key,pos)){
+          suicideFlag = true;
+        }
       }
     })
 
