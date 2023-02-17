@@ -34,6 +34,9 @@ function NextMoveBlue({validMoves,setPlayerState,makemove}) {
                         return (
                             <div key={eachEle} className="blueAvailableKeys" onClick={()=>{
                                 makemove(pressedBlue,eachEle+1)
+                                //to update the state back to old part
+                                changeAvailablePoints()
+                                changePressedBlue()
                             }}>
                                 {eachEle+1}
                             </div>

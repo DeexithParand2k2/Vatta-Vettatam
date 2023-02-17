@@ -134,6 +134,36 @@ function Board() {
     //1.get the name & establish the opponent
   }
 
+  const doRemoval = (key) =>{
+    var tempValidMoves = validMoves
+    var tempOpponentCheck = opponentCheck
+    var tempPlayerState = setPlayerState
+    delete(tempValidMoves[key]);
+    changeValidMoves(tempValidMoves)
+    delete(tempOpponentCheck[key])
+    changeOpponentCheck(tempOpponentCheck)
+    if(tempPlayerState.playersTeamOne[key]!==undefined){
+      delete(tempPlayerState.playersTeamOne[key])
+      changePlayerState(tempPlayerState)
+    }
+    else{
+      delete(tempPlayerState.playersTeamTwo[key])
+      changePlayerState(tempPlayerState)
+    }
+    window.location.reload(true);
+  }
+
+  const checkForRemoval = () =>{
+    //valid moves array must be empty, then for the same key, opponentcheck must have some val
+    Object.keys(validMoves).forEach((key)=>{
+      if(validMoves[key].length===0 && opponentCheck[key].length!==0){
+        doRemoval(key);
+      }
+    })
+
+    //call remove key function and update pointstore
+  }
+
   //check whether the position is only within neighbours
   useEffect(()=>{
     //change the valid moves
@@ -141,11 +171,11 @@ function Board() {
 
     //update opponent checkers
     updateOpponentCheckers(opponentCheck);
-    console.log(opponentCheck.b6)
 
     //create one for invalidChecker(opponents blocking)
     //then checking to be done for removal
     //different checking to end game
+    checkForRemoval();
     
   },[pointStore])
 
