@@ -135,6 +135,7 @@ function Board() {
   }
 
   const doRemoval = (key) =>{
+    console.log(pointStore)
     var tempValidMoves = validMoves
     var tempOpponentCheck = opponentCheck
     var tempPlayerState = setPlayerState
@@ -146,21 +147,27 @@ function Board() {
     changeOpponentCheck(tempOpponentCheck)
     if(tempPlayerState.playersTeamOne[key]!==undefined){
       holdpos = tempPlayerState.playersTeamOne[key]
-      delete(tempPlayerState.playersTeamOne[key])
+      delete tempPlayerState.playersTeamOne[key]
       changePlayerState(tempPlayerState)
     }
     else{
-      holdpos = tempPlayerState.playersTeamOne[key]
-      delete(tempPlayerState.playersTeamTwo[key])
+      holdpos = tempPlayerState.playersTeamTwo[key]
+      delete tempPlayerState.playersTeamTwo[key]
       changePlayerState(tempPlayerState)
     }
-    tempPointStore.splice(tempPointStore.indexOf(holdpos))
+    tempPointStore.splice(tempPointStore.indexOf(holdpos), 1);
     changePointStore(tempPointStore)
+    console.log(tempPointStore)
 
     var tempPointDataState = pointDataState
     tempPointDataState[holdpos].isPlaced="empty"
     changePointData(tempPointDataState)
     changeStatus(pointDataState)
+
+    //var tempValidMoves
+    updateValidMoves(validMoves)
+
+    console.log(tempPlayerState)
   }
 
   const checkForRemoval = () =>{
