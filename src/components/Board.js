@@ -138,19 +138,29 @@ function Board() {
     var tempValidMoves = validMoves
     var tempOpponentCheck = opponentCheck
     var tempPlayerState = setPlayerState
+    var tempPointStore = pointStore
+    var holdpos;
     delete(tempValidMoves[key]);
     changeValidMoves(tempValidMoves)
     delete(tempOpponentCheck[key])
     changeOpponentCheck(tempOpponentCheck)
     if(tempPlayerState.playersTeamOne[key]!==undefined){
+      holdpos = tempPlayerState.playersTeamOne[key]
       delete(tempPlayerState.playersTeamOne[key])
       changePlayerState(tempPlayerState)
     }
     else{
+      holdpos = tempPlayerState.playersTeamOne[key]
       delete(tempPlayerState.playersTeamTwo[key])
       changePlayerState(tempPlayerState)
     }
-    window.location.reload(true);
+    tempPointStore.splice(tempPointStore.indexOf(holdpos))
+    changePointStore(tempPointStore)
+
+    var tempPointDataState = pointDataState
+    tempPointDataState[holdpos].isPlaced="empty"
+    changePointData(tempPointDataState)
+    changeStatus(pointDataState)
   }
 
   const checkForRemoval = () =>{
@@ -182,9 +192,13 @@ function Board() {
   useEffect(()=>{
     changePointStore(Object.values(setPlayerState.playersTeamOne).concat(Object.values(setPlayerState.playersTeamTwo)))
     /*Handle the input before this*/
-    //after makemove update isplaced using pointDataState, each time setPlayerState changes 
+    //after makemove, update isplaced using pointDataState, each time setPlayerState changes 
     changeStatus(pointDataState)
+    checkForRemoval();
+
   },[setPlayerState]);
+
+
   
   return (
     <div className='gamediv'>

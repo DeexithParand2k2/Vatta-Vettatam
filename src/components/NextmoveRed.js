@@ -34,6 +34,9 @@ function NextMoveRed({validMoves,setPlayerState,makemove}) {
                         return (
                             <div key={eachEle} className="redAvailableKeys" onClick={()=>{
                                 makemove(pressedRed,eachEle+1)
+                                //to update the state back to old part
+                                changeAvailablePoints()
+                                changePressedRed()
                             }}>
                                 {eachEle+1}
                             </div>
