@@ -23,6 +23,7 @@ function Board() {
   const [open, setOpen] = useState(false);
   const [validMoves,changeValidMoves] = useState(validMovesArray);
   const [opponentCheck,changeOpponentCheck] = useState(opponentCheckArray)
+  const [latestMove,changeLatest] = useState()
 
   const handleClose = () => {
     setOpen(false);
@@ -70,9 +71,30 @@ function Board() {
   //send data as position
   const makemove = (coin,pos) =>{
     var temp = setPlayerState;
+    changeLatest(coin)
+
+    var suicideFlag = false
+
+    //detect suicide move
+    //key is the one which will be deleted by the coins move
+    Object.keys(validMoves).forEach((key)=>{
+      if(key[0]===coin[0] && key!=coin && validMoves[coin].includes(validMoves[key][0]) && validMoves[key].length===1 && validMoves[key][0]===pos-1 && opponentCheck[key].length!==0){
+        console.log(key,coin,validMoves[key][0]===pos-1,validMoves[key].length===1,validMoves[coin].includes(validMoves[key][0]),validMoves[key][0],opponentCheck[key].length!==0)
+        suicideFlag = true;
+      }
+      else{
+        //console.log(key,coin,validMoves[key][0]===pos,validMoves[key].length===1,validMoves[coin].includes(validMoves[key][0]),validMoves[key][0],opponentCheck[key].length!==0)
+      }
+    })
+
+    // console.log(coin,suicideFlag)
 
     //pos-1
-    if(pointStore.includes(pos-1)){
+    if(suicideFlag){
+      console.log('Be careful its a suicide move')
+      handleOpen()
+    }
+    else if(pointStore.includes(pos-1)){
       console.log("invalid input")
       handleOpen()
     } 
@@ -173,7 +195,7 @@ function Board() {
   const checkForRemoval = () =>{
     //valid moves array must be empty, then for the same key, opponentcheck must have some val
     Object.keys(validMoves).forEach((key)=>{
-      if(validMoves[key].length===0 && opponentCheck[key].length!==0){
+      if(validMoves[key].length===0 && opponentCheck[key].length!==0 && key[0]!==latestMove[0]){
         doRemoval(key);
       }
     })
@@ -218,7 +240,7 @@ function Board() {
 
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
         <Alert onClose={handleClose} severity="warning">
-          Invalid Move!
+          Suicide Move
         </Alert>
       </Snackbar>
     </div> 
