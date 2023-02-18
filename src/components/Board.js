@@ -10,10 +10,13 @@ import { forwardRef } from 'react'
 import NextMoveRed from './NextmoveRed.js'
 import ptsnear from '../data/ptsnear'
 import NextMoveBlue from './NextmoveBlue'
+import io from 'socket.io-client'
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+const socket = io.connect('http://localhost:3001')
 
 function Board() {
   //map points intially with isplaced as empty, and top,left pos
@@ -244,12 +247,22 @@ function Board() {
     //update opponent checkers
     updateOpponentCheckers(opponentCheck);
 
+    //send updated validmoves after its updated
+    socket.emit("get_socket_validmove",validMoves)
+
     //create one for invalidChecker(opponents blocking)
     //then checking to be done for removal
     //different checking to end game
     checkForRemoval();
     
   },[pointStore])
+
+  //listen to socket message
+  useEffect(()=>{
+    socket.on("moving_coin",(moveArr)=>{
+      makemove(moveArr[0],moveArr[1]-1)
+    })
+  },[socket])
 
   useEffect(()=>{
     changePointStore(Object.values(setPlayerState.playersTeamOne).concat(Object.values(setPlayerState.playersTeamTwo)))
@@ -259,8 +272,6 @@ function Board() {
     checkForRemoval();
 
   },[setPlayerState]);
-
-
   
   return (
     <div className='gamediv'>
@@ -270,6 +281,8 @@ function Board() {
           <Points pointData={pointDataState} />
       </div>
       <NextMoveBlue validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
+
+      {/* <button onClick={()=>{socket.emit("send_coin_move","sendplease")}}>just trigger</button> */}
 
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
         <Alert onClose={handleClose} severity="warning">
