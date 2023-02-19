@@ -5,10 +5,13 @@
 
 .Home{
     height: 100vh;
-    width: 100vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
     /* background-color: #EEE6CE; */
-    background-color: rgb(49,46,43);
+    background: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url('vintage-textured-paper.jpg');
+    /* background: linear-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) ), url('brown-papyrus-paper.jpg'); */
+    background-position: right top;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    box-sizing: border-box;
 }

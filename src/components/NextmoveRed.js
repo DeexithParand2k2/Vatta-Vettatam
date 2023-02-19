@@ -11,7 +11,7 @@ function NextMoveRed({validMoves,setPlayerState,makemove}) {
 
   return (
 
-    <div>
+    <div className='redControllerHolder'>
         <div className='redCoins'>
             {
                 Object.keys(setPlayerState.playersTeamOne).map((key)=>{
@@ -43,6 +43,20 @@ function NextMoveRed({validMoves,setPlayerState,makemove}) {
                         )
                     })
                 }
+            </div>
+        }
+
+        {availablePoints!==undefined && availablePoints.length===0 &&
+            <div className='redEntry'>
+                {/* <FontAwesomeIcon icon="fa-solid fa-lock" /> */}
+                <div className='standaloneKey'>L</div>
+            </div>
+        }
+
+        {availablePoints===undefined &&
+            <div className='redEntry'>
+                {/* <FontAwesomeIcon icon="fa-solid fa-lock" /> */}
+                <div style={{visibility:'hidden'}} className='standaloneKey'></div>
             </div>
         }
 

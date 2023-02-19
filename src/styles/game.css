@@ -10,16 +10,16 @@
 /*to handle relative positioning*/
 .boardHandler{
     position: relative;
-    display: inline-block;
-    margin: 30px;  
+    display: inline-block;  
 }
 
 .gamediv{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items:center;
 }
 
+/* Safari syntax */
 .point{
     position:absolute;
     height: 30px;

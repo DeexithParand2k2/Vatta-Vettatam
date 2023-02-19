@@ -4,9 +4,9 @@ import { useState,useEffect } from 'react'
 import Points from './Points'
 import pointData from '../data/pointStatus'
 import {playersTeamOne,playersTeamTwo,validMovesArray,opponentCheckArray} from '../data/players'
-import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { forwardRef } from 'react'
+import {Modal,Box,Typography,Snackbar} from '@mui/material'
 import NextMoveRed from './NextmoveRed.js'
 import ptsnear from '../data/ptsnear'
 import NextMoveBlue from './NextmoveBlue'
@@ -16,7 +16,20 @@ const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+// const socket = io.connect('https://common-rivers-stare-122-164-87-251.loca.lt/')
 const socket = io.connect('http://localhost:3001')
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 200,
+  borderRadius: "10px",
+  bgcolor: "background.paper",
+  textAlign: "center",
+  p: 4
+};
 
 function Board() {
   //map points intially with isplaced as empty, and top,left pos
@@ -27,6 +40,18 @@ function Board() {
   const [validMoves,changeValidMoves] = useState(validMovesArray);
   const [opponentCheck,changeOpponentCheck] = useState(opponentCheckArray)
   const [latestMove,changeLatest] = useState()
+  const [winner,changeWinner] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+
+  useState(()=>{
+    socket.on('opening_check',(data)=>{
+      console.log('from server',data)
+    })
+  },[])
+
+  const handleOpenModal = () => setOpenModal(true);
+
+  const handleCloseModal = () => setOpenModal(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -239,6 +264,21 @@ function Board() {
     //call remove key function and update pointstore
   }
 
+  const checkWinner = (teamOneSize,teamTwoSize) =>{
+    if(teamTwoSize===4){
+      changeWinner('Pandya')
+      console.log(winner)
+      handleOpenModal()
+      //red should will be winning here
+    }
+    if(teamOneSize===4){
+      changeWinner('Chola')
+      console.log(winner)
+      handleOpenModal()
+      //red should will be winning here
+    }
+  }
+
   //check whether the position is only within neighbours
   useEffect(()=>{
     //change the valid moves
@@ -249,18 +289,23 @@ function Board() {
 
     //send updated validmoves after its updated
     socket.emit("get_socket_validmove",validMoves)
+    socket.emit("get_socket_validmove_second",validMoves)
 
     //create one for invalidChecker(opponents blocking)
     //then checking to be done for removal
     //different checking to end game
     checkForRemoval();
+
+    //check winner
+    checkWinner(Object.keys(setPlayerState.playersTeamOne).length,Object.keys(setPlayerState.playersTeamTwo).length);
     
   },[pointStore])
 
   //listen to socket message
   useEffect(()=>{
-    socket.on("moving_coin",(moveArr)=>{
-      makemove(moveArr[0],moveArr[1]-1)
+    socket.on("moving_coin",(coin,pos)=>{
+      //makemove(moveArr[0],parseInt(moveArr[1]))
+      makemove(coin,pos)
     })
   },[socket])
 
@@ -272,7 +317,7 @@ function Board() {
     checkForRemoval();
 
   },[setPlayerState]);
-  
+
   return (
     <div className='gamediv'>
       <NextMoveRed validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
@@ -282,14 +327,28 @@ function Board() {
       </div>
       <NextMoveBlue validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
 
-      {/* <button onClick={()=>{socket.emit("send_coin_move","sendplease")}}>just trigger</button> */}
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {winner} Wins
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            {winner} for a reason
+          </Typography>
+        </Box>
+      </Modal>
 
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
         <Alert onClose={handleClose} severity="warning">
           Suicide Move
         </Alert>
       </Snackbar>
-    </div> 
+    </div>
   )
 }
 

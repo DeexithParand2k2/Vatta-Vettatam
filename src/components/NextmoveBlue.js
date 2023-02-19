@@ -11,7 +11,7 @@ function NextMoveBlue({validMoves,setPlayerState,makemove}) {
 
   return (
 
-    <div>
+    <div className='blueControllerHolder'>
         <div className='blueCoins'>
             {
                 Object.keys(setPlayerState.playersTeamTwo).map((key)=>{
@@ -27,7 +27,7 @@ function NextMoveBlue({validMoves,setPlayerState,makemove}) {
             }    
         </div>
         
-        {availablePoints!==undefined &&
+        {availablePoints!==undefined && availablePoints.length!==0 &&
             <div className='blueEntry'>
                 {
                     availablePoints.map((eachEle)=>{
@@ -43,6 +43,20 @@ function NextMoveBlue({validMoves,setPlayerState,makemove}) {
                         )
                     })
                 }
+            </div>
+        }
+
+        {availablePoints!==undefined && availablePoints.length===0 &&
+            <div className='blueEntry'>
+                {/* <FontAwesomeIcon icon="fa-solid fa-lock" /> */}
+                <div className='standaloneKey'>L</div>
+            </div>
+        }
+
+        {availablePoints===undefined &&
+            <div className='blueEntry'>
+                {/* <FontAwesomeIcon icon="fa-solid fa-lock" /> */}
+                <div style={{visibility:'hidden'}} className='standaloneKey'></div>
             </div>
         }
 
