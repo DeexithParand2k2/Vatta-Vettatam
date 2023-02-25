@@ -11,12 +11,12 @@ import NextMoveRed from './NextmoveRed.js'
 import ptsnear from '../data/ptsnear'
 import NextMoveBlue from './NextmoveBlue'
 import io from 'socket.io-client'
+import coinsound from '../soundeffect/Chess coin move.mp3'
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-// const socket = io.connect('https://common-rivers-stare-122-164-87-251.loca.lt/')
 const socket = io.connect('http://localhost:3001')
 
 const style = {
@@ -31,7 +31,13 @@ const style = {
   p: 4
 };
 
-function Board() {
+const playAudio = audio => {
+  console.log('sound play')
+  const audioToPlay = new Audio(audio);
+  audioToPlay.play();
+};
+
+function Board({callBackPlayerState}) {
   //map points intially with isplaced as empty, and top,left pos
   const [pointDataState,changePointData] = useState(pointData)
   const [setPlayerState,changePlayerState] = useState({playersTeamOne,playersTeamTwo})
@@ -139,7 +145,7 @@ function Board() {
         then not a suicide move
       */
 
-      if(!ptsnear[getCurrPos(key)].includes(getCurrPos(coin)) && key[0]===coin[0] && key!=coin && validMoves[coin].includes(validMoves[key][0]) && validMoves[key].length===1 && validMoves[key][0]===pos-1 && opponentCheck[key].length!==0){
+      if(!ptsnear[getCurrPos(key)].includes(getCurrPos(coin)) && key[0]===coin[0] && key!==coin && validMoves[coin].includes(validMoves[key][0]) && validMoves[key].length===1 && validMoves[key][0]===pos-1 && opponentCheck[key].length!==0){
         //console.log(key,coin,validMoves[key][0]===pos-1,validMoves[key].length===1,validMoves[coin].includes(validMoves[key][0]),validMoves[key][0],opponentCheck[key].length!==0)
         console.log(edgeCaseSuicideMove(key,pos))
         if(!edgeCaseSuicideMove(key,pos)){
@@ -164,6 +170,7 @@ function Board() {
       handleOpen()
     }
     else{
+      playAudio(coinsound)
       if(temp.playersTeamOne[coin]!==undefined){
         temp.playersTeamOne[coin] = parseInt(pos-1);
       }
@@ -250,6 +257,11 @@ function Board() {
     //var tempValidMoves
     updateValidMoves(validMoves)
 
+    callBackPlayerState(setPlayerState)
+
+    //update socket after deletion
+    socket.emit("get_socket_validmove_second",validMoves)
+
     console.log(tempPlayerState)
   }
 
@@ -265,14 +277,14 @@ function Board() {
   }
 
   const checkWinner = (teamOneSize,teamTwoSize) =>{
-    if(teamTwoSize===4){
-      changeWinner('Pandya')
+    if(teamTwoSize===2){
+      changeWinner('Cholas')
       console.log(winner)
       handleOpenModal()
       //red should will be winning here
     }
-    if(teamOneSize===4){
-      changeWinner('Chola')
+    if(teamOneSize===2){
+      changeWinner('Pandyas')
       console.log(winner)
       handleOpenModal()
       //red should will be winning here
@@ -306,6 +318,7 @@ function Board() {
     socket.on("moving_coin",(coin,pos)=>{
       //makemove(moveArr[0],parseInt(moveArr[1]))
       makemove(coin,pos)
+      playAudio(coinsound)
     })
   },[socket])
 
@@ -319,36 +332,36 @@ function Board() {
   },[setPlayerState]);
 
   return (
-    <div className='gamediv'>
-      <NextMoveRed validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
-      <div className='boardHandler'>
-          <img className="boardImg" src={Watermelon_chess_board} alt="watermelon_chess_board"/>
-          <Points pointData={pointDataState} />
+      <div className='gamediv'>
+        <NextMoveRed validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
+        <div className='boardHandler'>
+            <img className="boardImg" src={Watermelon_chess_board} alt="watermelon_chess_board"/>
+            <Points pointData={pointDataState} />
+        </div>
+        <NextMoveBlue validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
+
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              {winner} Win
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              {winner} for a reason
+            </Typography>
+          </Box>
+        </Modal>
+
+        <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
+          <Alert onClose={handleClose} severity="warning">
+            Suicide Move
+          </Alert>
+        </Snackbar>
       </div>
-      <NextMoveBlue validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
-
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            {winner} Wins
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {winner} for a reason
-          </Typography>
-        </Box>
-      </Modal>
-
-      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
-        <Alert onClose={handleClose} severity="warning">
-          Suicide Move
-        </Alert>
-      </Snackbar>
-    </div>
   )
 }
 

@@ -2,3 +2,43 @@
     margin: 0px;
     padding: 0px;
 }
+
+.header{
+    position: absolute;
+    top:0px;
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.headerGame{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 70%;
+}
+
+.cholasTeamName{
+    font-size: xx-large;
+    font-family: 'Bonheur Royale', cursive;
+    color: #3C2A21;
+}
+
+.pandiasTeamName{
+    padding-left:'10px';
+    color: #3C2A21;
+    font-size: xx-large;
+    font-family: 'Bonheur Royale', cursive;
+}
+
+.cholasScore,.pandiasScore{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Gajraj One', cursive;
+
+    font-size: xx-large;
+    border-radius: 5%;
+    color: #1A120B;
+}

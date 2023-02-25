@@ -17,6 +17,10 @@
     display: flex;
     justify-content: space-around;
     align-items:center;
+    width: 100%;
+
+    /*satisfy distance in laptop screen*/
+    margin-top: 30px;
 }
 
 /* Safari syntax */
