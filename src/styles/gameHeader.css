@@ -13,10 +13,20 @@
 }
 
 .headerGame{
+    margin: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-width: 70%;
+    width: 58%;
+}
+
+/* .cholasTeamName,.pandiasTeamName{
+    padding-left: 20px;
+    padding-right: 20px;
+} */
+
+.vikingImg{
+    padding-left: 20px;
 }
 
 .cholasTeamName{
