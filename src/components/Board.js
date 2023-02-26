@@ -6,13 +6,18 @@ import pointData from '../data/pointStatus'
 import {playersTeamOne,playersTeamTwo,validMovesArray,opponentCheckArray} from '../data/players'
 import MuiAlert from "@mui/material/Alert";
 import { forwardRef } from 'react'
-import {Modal,Box,Typography,Snackbar} from '@mui/material'
+import {Modal,Box,Typography,Snackbar,CardMedia} from '@mui/material'
 import NextMoveRed from './NextmoveRed.js'
 import ptsnear from '../data/ptsnear'
 import NextMoveBlue from './NextmoveBlue'
 import io from 'socket.io-client'
 import coinsound from '../soundeffect/Chess coin move.mp3'
 import invalidSound from '../soundeffect/Fail Sound Effect.mp3'
+import cholaWins from '../assets/JagameThandhiram-Cholas.jpg'
+import pandyaWins from '../assets/JagameThandhiram-Pandya.jpg'
+import winnerAudio from '../soundeffect/Winner Sound Effects.mp3'
+import swordSlash from '../soundeffect/sword slash.mp3'
+
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -26,20 +31,26 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 200,
-  borderRadius: "10px",
-  bgcolor: "background.paper",
+  width: 300,   
   textAlign: "center",
-  p: 4
 };
 
 const playAudio = audio => {
-  console.log('sound play')
+  const audioToPlay = new Audio(audio);
+  audioToPlay.play();
+};
+
+const killOpponent = audio => {
   const audioToPlay = new Audio(audio);
   audioToPlay.play();
 };
 
 const playInvalidAudio = audio => {
+  const audioToPlay = new Audio(audio);
+  audioToPlay.play();
+};
+
+const playWinnerAudio = audio => {
   console.log('sound play')
   const audioToPlay = new Audio(audio);
   audioToPlay.play();
@@ -56,7 +67,6 @@ function Board({callBackPlayerState}) {
   const [latestMove,changeLatest] = useState()
   const [winner,changeWinner] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  //const [latestMovesList,changeLatestMovesList] = useState([]);
   const [lmArray,changeLmArray] = useState([]);
   const [alertText,changeAlertText] = useState('Invalid Move')
 
@@ -291,6 +301,8 @@ function Board({callBackPlayerState}) {
 
     callBackPlayerState(setPlayerState)
 
+    killOpponent(swordSlash)
+
     //update socket after deletion
     socket.emit("get_socket_validmove_second",validMoves)
 
@@ -309,15 +321,17 @@ function Board({callBackPlayerState}) {
   }
 
   const checkWinner = (teamOneSize,teamTwoSize) =>{
-    if(teamTwoSize===5){
+    if(teamTwoSize===3){
       changeWinner('Cholas')
       console.log(winner)
+      playWinnerAudio(winnerAudio)
       handleOpenModal()
       //red should will be winning here
     }
-    if(teamOneSize===5){
+    if(teamOneSize===3){
       changeWinner('Pandyas')
       console.log(winner)
+      playWinnerAudio(winnerAudio)
       handleOpenModal()
       //red should will be winning here
     }
@@ -384,13 +398,21 @@ function Board({callBackPlayerState}) {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
+          {/* <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               {winner} Win
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               {winner} for a reason
             </Typography>
+          </Box> */}
+          
+          <Box sx={style}>
+            {(winner==='Cholas' &&
+              <img src={cholaWins} style={{maxWidth:'100%',border:'none'}} alt="BigCo Inc. logo"/>) ||
+              (winner==='Pandyas' &&
+                <img src={pandyaWins} style={{maxWidth:'100%',border:'none'}} alt="BigCo Inc. logo"/>)
+            }
           </Box>
         </Modal>
 
