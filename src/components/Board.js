@@ -12,6 +12,7 @@ import ptsnear from '../data/ptsnear'
 import NextMoveBlue from './NextmoveBlue'
 import io from 'socket.io-client'
 import coinsound from '../soundeffect/Chess coin move.mp3'
+import invalidSound from '../soundeffect/Fail Sound Effect.mp3'
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -38,6 +39,12 @@ const playAudio = audio => {
   audioToPlay.play();
 };
 
+const playInvalidAudio = audio => {
+  console.log('sound play')
+  const audioToPlay = new Audio(audio);
+  audioToPlay.play();
+};
+
 function Board({callBackPlayerState}) {
   //map points intially with isplaced as empty, and top,left pos
   const [pointDataState,changePointData] = useState(pointData)
@@ -51,6 +58,7 @@ function Board({callBackPlayerState}) {
   const [openModal, setOpenModal] = useState(false);
   //const [latestMovesList,changeLatestMovesList] = useState([]);
   const [lmArray,changeLmArray] = useState([]);
+  const [alertText,changeAlertText] = useState('Invalid Move')
 
   useState(()=>{
     socket.on('opening_check',(data)=>{
@@ -162,19 +170,27 @@ function Board({callBackPlayerState}) {
     //pos-1
     if(suicideFlag){
       console.log('Be careful its a suicide move')
+      playInvalidAudio(invalidSound)
+      changeAlertText('Suicide Move')
       handleOpen()
     }
     else if(pointStore.includes(pos-1)){
       console.log("invalid input")
+      playInvalidAudio(invalidSound)
+      changeAlertText('Invalid Input')
       handleOpen()
     } 
     else if(!validMoves[coin].includes(pos-1)){
       console.log("Can Move only one step")
+      playInvalidAudio(invalidSound)
+      changeAlertText("Can Move only one step")
       handleOpen()
     }
     else{
       if(lmArray.length>=1 && lmArray[0].coin[0]===coin[0]){
         console.log("invalid input")
+        playInvalidAudio(invalidSound)
+        changeAlertText("It's not your turn now")
         handleOpen()
       }
       else{
@@ -293,13 +309,13 @@ function Board({callBackPlayerState}) {
   }
 
   const checkWinner = (teamOneSize,teamTwoSize) =>{
-    if(teamTwoSize===2){
+    if(teamTwoSize===5){
       changeWinner('Cholas')
       console.log(winner)
       handleOpenModal()
       //red should will be winning here
     }
-    if(teamOneSize===2){
+    if(teamOneSize===5){
       changeWinner('Pandyas')
       console.log(winner)
       handleOpenModal()
@@ -378,9 +394,10 @@ function Board({callBackPlayerState}) {
           </Box>
         </Modal>
 
-        <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
+        <Snackbar open={open} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
           <Alert onClose={handleClose} severity="warning">
-            Suicide Move
+            {/* Suicide Move */}
+            {alertText}
           </Alert>
         </Snackbar>
       </div>
