@@ -42,3 +42,20 @@
     color: white;
     font-size:large;
 }
+
+.latestMoves{
+    position: absolute;
+    top:20px;
+    right:20px;
+    text-align: center;
+
+    border-radius: 20px;
+    padding: 10px;
+    min-height: 100px;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #BCA797;
+}

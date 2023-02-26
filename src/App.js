@@ -9,11 +9,12 @@ function App() {
   const callBackPlayerState = (callback) =>{
     changePlayerState(callback)
   }
+  
   return (
     <div className="Home">
-      <HeaderGame setPlayerState={setPlayerState}/>
+      <HeaderGame setPlayerState={setPlayerState} />
       {/* only board under flex, others pos fix */}
-      <Board callBackPlayerState={callBackPlayerState} className="board" />
+      <Board className="board" callBackPlayerState={callBackPlayerState} />
     </div>
   );
 }

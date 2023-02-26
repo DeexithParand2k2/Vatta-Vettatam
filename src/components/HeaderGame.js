@@ -1,9 +1,9 @@
-import React from 'react'
+import React,{useState} from 'react'
 import vs from '../assets/viking2.png'
 import '../styles/gameHeader.css'
 import MyHealthBar from './MyHealthBar'
 
-function HeaderGame({setPlayerState}) {
+function HeaderGame({setPlayerState,lmArray}) {
   return (
     <div className='header' style={{boxSizing:'border-box'}}>
       <div className='headerGame'>

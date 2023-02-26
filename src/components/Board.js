@@ -17,6 +17,7 @@ const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+//const socket = io.connect('https://39c7-2401-4900-1cd1-2fde-9fe-48ee-c416-f9f9.in.ngrok.io')
 const socket = io.connect('http://localhost:3001')
 
 const style = {
@@ -48,6 +49,8 @@ function Board({callBackPlayerState}) {
   const [latestMove,changeLatest] = useState()
   const [winner,changeWinner] = useState('');
   const [openModal, setOpenModal] = useState(false);
+  //const [latestMovesList,changeLatestMovesList] = useState([]);
+  const [lmArray,changeLmArray] = useState([]);
 
   useState(()=>{
     socket.on('opening_check',(data)=>{
@@ -170,20 +173,33 @@ function Board({callBackPlayerState}) {
       handleOpen()
     }
     else{
-      playAudio(coinsound)
-      if(temp.playersTeamOne[coin]!==undefined){
-        temp.playersTeamOne[coin] = parseInt(pos-1);
-      }
-      else if(temp.playersTeamTwo[coin]!==undefined){
-        temp.playersTeamTwo[coin] = parseInt(pos-1);
+      if(lmArray.length>=1 && lmArray[0].coin[0]===coin[0]){
+        console.log("invalid input")
+        handleOpen()
       }
       else{
-        console.log('undefined')
+        playAudio(coinsound)
+        var lmList = lmArray
+        lmList.unshift({'coin':coin,'position':pos})
+        if(lmList.length===4) lmList.pop()
+        changeLmArray(lmList)
+
+        if(temp.playersTeamOne[coin]!==undefined){
+          temp.playersTeamOne[coin] = parseInt(pos-1);
+        }
+        else if(temp.playersTeamTwo[coin]!==undefined){
+          temp.playersTeamTwo[coin] = parseInt(pos-1);
+        }
+        else{
+          console.log('undefined')
+        }
+        var playersTeamOne = temp.playersTeamOne
+        var playersTeamTwo = temp.playersTeamTwo
+        
+        changePlayerState({playersTeamOne,playersTeamTwo})        
       }
-      var playersTeamOne = temp.playersTeamOne
-      var playersTeamTwo = temp.playersTeamTwo
-      
-      changePlayerState({playersTeamOne,playersTeamTwo})
+
+
     }
   }
 
@@ -331,7 +347,13 @@ function Board({callBackPlayerState}) {
 
   },[setPlayerState]);
 
+  // latestMoveList display
+  // useEffect(()=>{
+  //   console.log(latestMovesList)
+  // },latestMovesList)
+
   return (
+    <>
       <div className='gamediv'>
         <NextMoveRed validMoves={validMoves} makemove={makemove} setPlayerState={setPlayerState}/>
         <div className='boardHandler'>
@@ -362,6 +384,15 @@ function Board({callBackPlayerState}) {
           </Alert>
         </Snackbar>
       </div>
+
+      {/* temporarily  */}
+      <div className='latestMoves'>
+        {lmArray.length!==undefined && lmArray.map((obj,index)=>(
+          obj.coin[0]==='r' && <h3 key={index} style={{color:'red'}}>{obj.coin}&nbsp;&rarr;&nbsp;{obj.position}</h3> ||
+          obj.coin[0]==='b' && <h3 key={index} style={{color:'blue'}}>{obj.coin}&nbsp;&rarr;&nbsp;{obj.position}</h3>
+        ))}
+      </div>
+    </>
   )
 }
 
