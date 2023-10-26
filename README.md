@@ -32,7 +32,8 @@ A coin is considered captured when all its possible moves are blocked. Once a pl
 <img width="600" alt="attack12 result" src="https://github.com/DeexithParand2k2/vatta-vettatam/assets/72688656/288298f9-8be0-4d15-becb-eac8a47f4a4e">
 
 ## Suicide Move Alert
-The game includes a feature that detects and alerts players to "suicide moves." A suicide move is when a player mistakenly makes a move that captures their own coin. The game will notify the player of this error, allowing them to rectify their move.
+The game includes a feature that detects and alerts players from making "suicide moves." A suicide move is when a player mistakenly makes a move that captures their own coin. The game will notify the player of this error, allowing them to rectify their move.
+
 <img width="600" alt="suicide move" src="https://github.com/DeexithParand2k2/vatta-vettatam/assets/72688656/edf5f6b7-7017-4ef3-b524-63a8fd20a39e">
 <img width="600" alt="suicide move 1" src="https://github.com/DeexithParand2k2/vatta-vettatam/assets/72688656/775b9883-b81b-440f-9342-b28b4f9ecb8c">
 
